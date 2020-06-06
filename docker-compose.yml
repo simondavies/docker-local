@@ -1,0 +1,70 @@
+version: '3'
+
+networks:
+    simondavies:
+
+services:
+    nginx:
+        image: nginx:stable-alpine
+        container_name: nginx_simondavies
+        ports:
+            - "8080:80"
+        volumes:
+            - ./src:/var/www/html
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php
+            - mariadb
+        networks:
+            - simondavies
+
+    mariadb:
+        image: mariadb:10.5
+        container_name: mariadb_simondavies
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 43060:3306
+        volumes:
+            - ./mysql:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: simondavies-docker
+            MYSQL_USER: simondaviesadmin
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: secret
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mariadb
+        networks:
+            - simondavies
+
+    php:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: php_simondavies
+        volumes:
+            - ./src:/var/www/html
+            - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+        ports:
+            - "9000:9000"
+        networks:
+            - simondavies
+
+    composer:
+        image: composer:latest
+        container_name: composer_simondavies
+        volumes:
+            - ./src:/var/www/html
+        working_dir: /var/www/html
+        depends_on:
+            - php
+        networks:
+            - simondavies
+
+    npm:
+        image: node:14.3
+        container_name: npm_simondavies
+        volumes:
+            - ./src:/var/www/html
+        working_dir: /var/www/html
+        entrypoint: ['npm']
