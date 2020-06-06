@@ -17,7 +17,7 @@ Open up the `docker-compose.yml` and change any mentions of `simondavies` and ot
 To be continued...
 
 ---
-
+z
 ## Set Up
 
 To be completed....
@@ -51,4 +51,4 @@ Contributions are what make the open source community such an amazing place to b
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE.md` for more information.
